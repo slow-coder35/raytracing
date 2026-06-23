@@ -2,7 +2,8 @@
 #define HITTABLE_H
 
 #include "ray.h"
-
+#include "rtweekend.h"
+#include "aabb.h"
 class material;
 
 class hit_record{
@@ -10,7 +11,11 @@ class hit_record{
         point3 p;
         vec3 normal;
         shared_ptr<material> mat;
+        
         double t;
+        double u;
+        double v;
+
 
         bool front_face;
 
