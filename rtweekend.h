@@ -43,6 +43,7 @@ inline int random_int(int min, int max){
 #include"color.h"
 #include"camera.h"
 #include "aabb.h"
+#include "texture.h"
 
 
 #endif
