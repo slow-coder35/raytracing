@@ -219,7 +219,7 @@ void bouncing_spheres(){
     void perlin_spheres() {
     hittable_list world;
 
-    auto pertext = make_shared<noise_texture>();
+    auto pertext = make_shared<noise_texture>(4);
     world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(pertext)));
     world.add(make_shared<sphere>(point3(0,2,0), 2, make_shared<lambertian>(pertext)));
 
@@ -239,6 +239,9 @@ void bouncing_spheres(){
 
     cam.render(world);
     }
+
+
+    
     
     int main (){
         switch(4){
