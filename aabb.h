@@ -8,7 +8,9 @@ class aabb{
     interval x,y,z;
     
     aabb(){}
-    aabb(const interval& x,const interval& y,const interval& z) : x(x),y(y),z(z){}
+    aabb(const interval& x,const interval& y,const interval& z) : x(x),y(y),z(z){
+        pads_to_minimum();
+    }
 
 
     aabb (const point3& a,const point3& b){
@@ -64,6 +66,14 @@ class aabb{
     }
 
     static const aabb empty,universe;
+
+    private: 
+    void pads_to_minimum(){
+        double delta=0.0001;
+        if(x.size()<delta) x=x.expand(delta);
+        if(y.size()<delta) y=y.expand(delta);
+        if(z.size()<delta) z=z.expand(delta);
+    }
 
 };
 
