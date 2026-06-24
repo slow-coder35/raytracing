@@ -75,16 +75,21 @@ class image_texture:public texture{
 };
 
 
+
+//improve the frequency so that the input point to vary more quickyly
+//introduction of double p makes sure of the fact that the points  are fastly varied
 class noise_texture:public texture{
-    public:
-    noise_texture(){};
+public:
+noise_texture(double scale):scale(scale){}
 
-    color value(double u,double v,const point3& p) const override{
-        return color(1,1,1)* noise.noise(p);
-    }
+color value (double u,double v,const point3& p)const override{
+    return color(1,1,1)*0.5*( 1.0 + noise.noise(scale*p));
 
-    private:
-        perlin noise;
+}
+private:
+    perlin noise;
+    double scale;
+
 };
 
 #endif
