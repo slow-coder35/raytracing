@@ -9,6 +9,7 @@
 #include "material.h"
 #include "material.h"
 #include "quad.h"
+#include "cylinder.h"
 
 #include <iostream>
 
@@ -276,14 +277,67 @@ void bouncing_spheres(){
     cam.render(world);
 }
 
-    
+
+
+    void cylinder_render() {
+    hittable_list world;
+
+    // Materials
+    auto left_red     = make_shared<lambertian>(color(1.0, 0.2, 0.2));
+    auto back_green   = make_shared<lambertian>(color(0.2, 1.0, 0.2));
+    auto right_blue   = make_shared<lambertian>(color(0.2, 0.2, 1.0));
+    auto upper_orange = make_shared<lambertian>(color(1.0, 0.5, 0.0));
+    auto lower_teal   = make_shared<lambertian>(color(0.2, 0.8, 0.8));
+
+    //cylinder
+    for(int x=-3;x<=3;x++)
+{
+    for(int z=-3;z<=3;z++)
+    {
+        world.add(make_shared<cylinder>(
+            point3(x*2.5,0,-10-z*2),
+            unit_vector(vec3(
+                random_double(-1,1),
+                random_double(-1,1),
+                random_double(-1,1)
+            )),
+            0.4,
+            2.0,
+            make_shared<lambertian>(
+                color(
+                    random_double(),
+                    random_double(),
+                    random_double()
+                )
+            )
+        ));
+    }
+}
+
+    camera cam;
+
+    cam.aspect_ratio      = 1.0;
+    cam.image_width       = 400;
+    cam.samples_per_pixel = 100;
+    cam.max_depth         = 50;
+
+    cam.vfov     = 80;
+    cam.lookfrom = point3(0,0,9);
+    cam.lookat   = point3(0,0,0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+
+    cam.render(world);
+} 
     
     int main (){
-        switch(5){
+        switch(6){
             case 1: bouncing_spheres();break;
             case 2: checkered_spheres();break;
             case 3 :earth();break;
             case 4 :perlin_spheres();break;
             case 5: quads();break;
+            case 6:cylinder_render();break;
         }
     }

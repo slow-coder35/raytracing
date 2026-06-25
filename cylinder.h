@@ -80,6 +80,7 @@ public:
         {
             side_rec.t = root;
             side_rec.p = r.at(side_rec.t);
+            side_rec.mat = mat;
             double h = dot(side_rec.p - center, axis);
             if (h > height / 2 || h < -height / 2)
             {
@@ -89,6 +90,7 @@ public:
             {
                 point3 foot = center + dot(side_rec.p - center, axis) * axis;
                 side_rec.set_face_normal(r, side_rec.p - foot);
+                
             }
         }
 
