@@ -8,7 +8,7 @@
 
 class disk :public hittable{
     public:
-
+    disk(){};
     disk(const point3& center,const vec3& normal,double radius,shared_ptr<material> mat) : center(center),normal(unit_vector(normal)),radius(radius),mat(mat){
         auto rvec=vec3(radius,radius,radius);
         bbox=aabb(center-rvec,center+rvec);
