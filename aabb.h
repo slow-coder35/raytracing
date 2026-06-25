@@ -77,8 +77,39 @@ class aabb{
 
 };
 
+
+
+
 const aabb aabb::empty =aabb(interval::empty,interval::empty,interval::empty);
 const aabb aabb::universe=aabb(interval::universe,interval::universe,interval::universe);
+interval operator+(const interval& ival, double displacement) {
+    return interval(
+        ival.min + displacement,
+        ival.max + displacement
+    );
+}
+inline interval operator-(const interval& ival, double displacement) {
+    return interval(
+        ival.min - displacement,
+        ival.max - displacement
+    );
+}
+inline aabb operator+(const aabb& bbox, const vec3& offset) {
+    return aabb(
+        bbox.x + offset.x(),
+        bbox.y + offset.y(),
+        bbox.z + offset.z()
+    );
+    
+}
+inline aabb operator-(const aabb& bbox, const vec3& offset) {
+    return aabb(
+        bbox.x - offset.x(),
+        bbox.y - offset.y(),
+        bbox.z - offset.z()
+    );
+}
+
 
 
 #endif

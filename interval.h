@@ -38,6 +38,7 @@ class interval {
             return interval(min-padding,max+padding);
         }
         
+        
 
         static const interval empty,universe;
 
