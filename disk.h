@@ -38,7 +38,7 @@ class disk :public hittable{
         
     }  
     
-    private:
+    protected:
 
     point3 center;
     vec3 normal;
@@ -48,26 +48,46 @@ class disk :public hittable{
 
 };
 
-// class ring:public disk{
+class ring:public disk{
 
-//     public:
-//         ring(const point3& center,const vec3& normal,double inner_radius,double outer_radius,shared_ptr<material> mat) : center(center),normal(unit_vector(normal)),inner_radius(inner_radius),outer_radius(outer_radius),mat(mat){
-//         auto rvec=vec3(outer_radius,outer_radius,outer_radius);
-//         bbox=aabb(center-rvec,center+rvec);
-//     }
+    public:
+        ring(const point3& center,const vec3& normal,double inner_radius,double outer_radius,shared_ptr<material> mat) : disk(center,normal,outer_radius,mat),inner_radius(inner_radius){}
 
+    aabb bounding_box()const override {return bbox;}
 
+    bool hit(const ray& r,interval ray_t,hit_record& rec)const override{
+    
+        double denom=dot(normal,r.direction());//denominator
 
+        if(std::fabs(denom)<1e-8) return false;   //is parallel to the plane
+        
+        auto t=(dot(center-r.origin(),normal))/denom;  //parameter t
+        if(!ray_t.contain(t)) return false;            //intersection is behind the camera
 
-//     private:
-//         point3 center;
-//         vec3 normal;
-//         double inner_radius,outer_radius;
-//         shared_ptr<material> mat;
-//         aabb bbox;
+        point3 p=r.at(t);
+
+        if((p-center).length_squared()>radius*radius || (p-center).length_squared()>inner_radius*inner_radius)return false;
+            
+        
+        rec.t=t;
+        rec.p=r.at(t);
+        rec.mat=mat;
+        rec.set_face_normal(r,normal);
+            
+        return true;
         
 
-// };
+    }
+
+
+
+
+
+    private:
+        double inner_radius;
+        
+
+};
 
 
 
