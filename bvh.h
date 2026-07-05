@@ -2,26 +2,30 @@
 #define BVH_H
 
 #include "rtweekend.h"
+#include "aabb.h"
+#include"hittable.h"
+#include"hittable_list.h"
+#include <algorithm>
 
-class:bvh_node:public hittable{
+class bvh_node:public hittable{
     public:
     bvh_node(hittable_list list):bvh_node(list.objects,0,list.objects.size()){}
 
-    bvh_node(std::vector<shared_ptr<hittable>&objects,size_t start, size_t end){
-        bbox = aabb.empty();
+    bvh_node(std::vector<shared_ptr<hittable>>&objects,size_t start, size_t end){
+        bbox = aabb::empty;
         for (size_t object_index=start ;object_index<end; object_index++){
-            bbox = aabb(bbox,objects[objects_index]->bounding_box());
+            bbox = aabb(bbox,objects[object_index]->bounding_box());
         }
         int axis=bbox.longest_axis();
         auto comparator=(axis==0)?box_x_compare:(axis==1)?box_y_compare:box_x_compare;
-        
-        if(object_span==1)left=right=object[start];
-        elseif(object_span==2){
-            left=object[start];
-            right=object[start+1];
+        size_t object_span = end - start;
+        if(object_span==1)left=right=objects[start];
+        else if(object_span==2){
+            left=objects[start];
+            right=objects[start+1];
         }else{
             std::sort(std::begin(objects)+start,std::begin(objects)+end,comparator);
-            auto mid=start+object_span/2;ts,mid,end
+            auto mid=start+object_span/2;
             left=make_shared<bvh_node>(objects,start,mid);
             right=make_shared<bvh_node>(objects,mid,end);
 
@@ -29,7 +33,7 @@ class:bvh_node:public hittable{
         bbox=aabb(left->bounding_box(),right->bounding_box());
     }
 
-    bool hit(const ray& r,interval ray_t,hit_record& rec)cosnt override{
+    bool hit(const ray& r,interval ray_t,hit_record& rec)const override{
         if(!bbox.hit(r,ray_t))return false;
 
         bool hit_left=left->hit(r,ray_t,rec);
@@ -40,7 +44,7 @@ class:bvh_node:public hittable{
     aabb bounding_box()const override{return bbox;}
 
     private:
-    shared_ptr<hittable left;
+    shared_ptr<hittable> left;
     shared_ptr<hittable> right;
     aabb bbox;
 
