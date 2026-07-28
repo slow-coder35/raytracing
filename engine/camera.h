@@ -4,6 +4,9 @@
 #include "hittable.h"
 #include <limits>
 #include "material.h"
+#include <omp.h>
+#include <atomic>
+#include<chrono>
 
 
 class camera{
@@ -26,12 +29,22 @@ class camera{
         double focus_dist=10;
         
         void render(const hittable& world) {
+            auto start=std::chrono::high_resolution_clock::now();
             initialize();
+
+            
 
             std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
+
+            color* image = new color[image_width * image_height];
+            int total_pixels=image_width*image_height;
+            std::atomic<int> done{0};
+
+
+            #pragma omp parallel for collapse(2) schedule(dynamic)
             for (int j = 0; j < image_height; j++) {
-                std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
+                // std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
                 for (int i = 0; i < image_width; i++) {
                     // auto pixel_center = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
                     // auto ray_direction = pixel_center - center;
@@ -45,11 +58,42 @@ class camera{
                         pixel_color+=ray_color(r,max_depth,world);
                     }
                     
-                    write_color(std::cout,pixel_samples_scale * pixel_color);
+                    image[j * image_width + i] = write_color(pixel_samples_scale * pixel_color);
+                    int completed=done++;
+                    if((completed & 1023)==0){
+                        #pragma omp critical
+                            std::clog<<"\r"
+                                <<done<<"/"<<total_pixels
+                                <<"total_pixels"<<
+                                std::flush;
+                        
+                    }
                 }
             }
 
+            for (int j = 0; j < image_height; ++j) {
+            for (int i = 0; i < image_width; ++i) {
+        
+                const color& pixel = image[j * image_width + i];
+                                    std::cout << pixel.x() << ' '
+                                    << pixel.y() << ' '
+                                    << pixel.z() << '\n';
+            }
+}
+
+
+
+
+    delete[] image;
+
+        
+
+
             std::clog << "\rDone.                 \n";
+        auto end=std::chrono::high_resolution_clock::now();
+        auto duration=std::chrono::duration_cast<std::chrono::milliseconds>(end-start);
+
+        std::clog <<"\ntotal time :"<< duration.count()/1000.0<<'\n';
         }
 
 
