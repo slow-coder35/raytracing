@@ -18,7 +18,7 @@ A CPU-based physically based Monte Carlo ray tracer written in modern C++17. The
 Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone github.com/slow-coder35/raytracing
 cd raytracer
 ```
 
